@@ -4,3 +4,5 @@
 /vendor/
 .DS_Store
 Thumbs.db
+backend/database/*.sqlite
+backend/database/*.sqlite-journal
