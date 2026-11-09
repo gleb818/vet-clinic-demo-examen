@@ -10,6 +10,7 @@ require_once __DIR__ . '/classes/Auth.php';
 require_once __DIR__ . '/classes/User.php';
 require_once __DIR__ . '/classes/Application.php';
 require_once __DIR__ . '/classes/Review.php';
+require_once __DIR__ . '/classes/Pet.php';
 
 function redirect(string $path): void {
     header('Location: ' . BASE . $path);

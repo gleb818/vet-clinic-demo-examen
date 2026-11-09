@@ -15,6 +15,7 @@
         <a href="<?= BASE ?>/frontend/admin.php">Админ-панель</a>
       <?php else: ?>
         <a href="<?= BASE ?>/frontend/applications.php">Мои записи</a>
+        <a href="<?= BASE ?>/frontend/pets.php">Мои питомцы</a>
         <a href="<?= BASE ?>/frontend/application_create.php">Записаться</a>
       <?php endif; ?>
       <a href="<?= BASE ?>/backend/actions/logout.php">Выйти</a>

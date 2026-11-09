@@ -25,17 +25,25 @@ CREATE TABLE IF NOT EXISTS payment_methods (
 INSERT OR IGNORE INTO payment_methods (name) VALUES
   ('Наличными'), ('Картой в клинике');
 
+CREATE TABLE IF NOT EXISTS pets (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER NOT NULL,
+  name TEXT NOT NULL,
+  species TEXT NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
 CREATE TABLE IF NOT EXISTS applications (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   user_id INTEGER NOT NULL,
-  pet_name TEXT NOT NULL,
-  species TEXT NOT NULL,
+  pet_id INTEGER NOT NULL,
   service TEXT NOT NULL,
   appointment_datetime TEXT NOT NULL,
   payment_method_id INTEGER NOT NULL,
   status_id INTEGER NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (pet_id) REFERENCES pets(id) ON DELETE CASCADE,
   FOREIGN KEY (payment_method_id) REFERENCES payment_methods(id),
   FOREIGN KEY (status_id) REFERENCES statuses(id)
 );

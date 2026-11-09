@@ -2,7 +2,7 @@
 class Validator {
     public static function login(string $v): ?string {
         if ($v === '') return 'Введите логин';
-        if (!preg_match('/^[A-Za-z0-9]{6,}$/', $v)) return 'Логин: латиница и цифры, минимум 6 символов';
+        if (!preg_match('/^(Admin|[A-Za-z0-9]{6,})$/', $v)) return 'Логин: латиница и цифры, минимум 6 символов';
         return null;
     }
     public static function password(string $v): ?string {

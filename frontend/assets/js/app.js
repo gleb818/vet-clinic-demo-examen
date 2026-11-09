@@ -33,3 +33,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
   startAutoPlay();
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+    const timeInput = document.getElementById('appointment_time');
+    if (!timeInput) return;
+
+    timeInput.addEventListener('change', function() {
+        const time = this.value;
+        if (!time) return;
+        
+        const hour = parseInt(time.split(':')[0]);
+        if (hour < 9 || hour >= 20) {
+            this.style.borderColor = '#c0392b';
+            this.setCustomValidity('Клиника работает с 09:00 до 20:00');
+            this.reportValidity();
+        } else {
+            this.style.borderColor = '#ccc';
+            this.setCustomValidity('');
+        }
+    });
+});

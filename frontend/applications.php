@@ -22,6 +22,13 @@ require __DIR__ . '/partials/header.php';
     <div>Оплата: <?= e($a['payment_name']) ?></div>
     <div>Статус: <span class="status"><?= e($a['status_name']) ?></span></div>
 
+    <?php if ($a['status_name'] === 'Новая'): ?>
+      <form method="post" action="<?= BASE ?>/backend/actions/application_cancel.php" style="margin-top: 10px;">
+        <input type="hidden" name="id" value="<?= (int)$a['id'] ?>">
+        <button class="btn small ghost" style="color: #c0392b; border-color: #c0392b;">Отменить заявку</button>
+      </form>
+    <?php endif; ?>
+
     <?php if ($a['status_name'] === 'Приём завершён' && empty($reviewed[(int)$a['id']])): ?>
       <form method="post" action="<?= BASE ?>/backend/actions/review_create.php" class="form-inline">
         <input type="hidden" name="application_id" value="<?= (int)$a['id'] ?>">

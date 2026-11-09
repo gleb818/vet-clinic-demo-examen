@@ -6,25 +6,27 @@ $errors = errors();
 $old = $_SESSION['old'] ?? [];
 unset($_SESSION['old']);
 $payments = Database::pdo()->query('SELECT * FROM payment_methods')->fetchAll();
+$pets = Pet::forUser(Auth::id());
+
 require __DIR__ . '/partials/header.php';
 ?>
 <h1>Запись на приём</h1>
+
+<?php if (!$pets): ?>
+    <div class="toast error">У вас нет добавленных питомцев. <a href="<?= BASE ?>/frontend/pets.php">Добавьте питомца</a> сначала.</div>
+<?php else: ?>
 <form method="post" action="<?= BASE ?>/backend/actions/application_create.php" class="form">
-  <label>Кличка питомца
-    <input name="pet_name" value="<?= e($old['pet_name'] ?? '') ?>">
-    <?php if (!empty($errors['pet_name'])): ?><span class="err"><?= e($errors['pet_name']) ?></span><?php endif; ?>
-  </label>
   
-  <label>Вид животного
-    <select name="species">
+  <label>Выберите питомца
+    <select name="pet_id">
       <option value="">— выберите —</option>
-      <?php 
-      $speciesList = ['Кошка', 'Собака', 'Грызун', 'Птица', 'Другое'];
-      foreach ($speciesList as $s): ?>
-        <option value="<?= $s ?>" <?= ($old['species'] ?? '') === $s ? 'selected' : '' ?>><?= $s ?></option>
+      <?php foreach ($pets as $p): ?>
+        <option value="<?= (int)$p['id'] ?>" <?= (int)($old['pet_id'] ?? 0) === (int)$p['id'] ? 'selected' : '' ?>>
+          <?= e($p['name']) ?> (<?= e($p['species']) ?>)
+        </option>
       <?php endforeach; ?>
     </select>
-    <?php if (!empty($errors['species'])): ?><span class="err"><?= e($errors['species']) ?></span><?php endif; ?>
+    <?php if (!empty($errors['pet_id'])): ?><span class="err"><?= e($errors['pet_id']) ?></span><?php endif; ?>
   </label>
 
   <label>Услуга
@@ -44,8 +46,8 @@ require __DIR__ . '/partials/header.php';
     <?php if (!empty($errors['appointment_date'])): ?><span class="err"><?= e($errors['appointment_date']) ?></span><?php endif; ?>
   </label>
 
-  <label>Время (ЧЧ:ММ, с 09:00 до 20:00)
-    <input name="appointment_time" placeholder="14:30" value="<?= e($old['appointment_time'] ?? '') ?>">
+  <label>Время (ЧЧ:ММ)
+    <input name="appointment_time" id="appointment_time" placeholder="14:30" value="<?= e($old['appointment_time'] ?? '') ?>">
     <?php if (!empty($errors['appointment_time'])): ?><span class="err"><?= e($errors['appointment_time']) ?></span><?php endif; ?>
   </label>
 
@@ -63,4 +65,5 @@ require __DIR__ . '/partials/header.php';
   
   <button class="btn" type="submit">Записаться</button>
 </form>
+<?php endif; ?>
 <?php require __DIR__ . '/partials/footer.php'; ?>

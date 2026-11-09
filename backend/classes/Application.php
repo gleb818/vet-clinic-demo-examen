@@ -3,13 +3,12 @@ class Application {
     public static function create(int $userId, array $d): int {
         $st = Database::pdo()->prepare(
             'INSERT INTO applications
-             (user_id, pet_name, species, service, appointment_datetime, payment_method_id, status_id)
-             VALUES (?, ?, ?, ?, ?, ?, (SELECT id FROM statuses WHERE name = ?))'
+             (user_id, pet_id, service, appointment_datetime, payment_method_id, status_id)
+             VALUES (?, ?, ?, ?, ?, (SELECT id FROM statuses WHERE name = ?))'
         );
         $st->execute([
             $userId,
-            $d['pet_name'],
-            $d['species'],
+            $d['pet_id'],
             $d['service'],
             $d['appointment_datetime'],
             $d['payment_method_id'],
@@ -20,10 +19,11 @@ class Application {
 
     public static function forUser(int $userId): array {
         $st = Database::pdo()->prepare(
-            'SELECT a.*, s.name AS status_name, p.name AS payment_name
+            'SELECT a.*, s.name AS status_name, p.name AS payment_name, pt.name AS pet_name, pt.species
              FROM applications a
              JOIN statuses s ON s.id = a.status_id
              JOIN payment_methods p ON p.id = a.payment_method_id
+             JOIN pets pt ON pt.id = a.pet_id
              WHERE a.user_id = ?
              ORDER BY a.id DESC'
         );
@@ -31,11 +31,12 @@ class Application {
         return $st->fetchAll();
     }
 
-        public static function all(array $filters = [], int $limit = 5, int $offset = 0): array {
-        $sql = 'SELECT a.*, s.name AS status_name, p.name AS payment_name, u.full_name AS owner_name
+    public static function all(array $filters = [], int $limit = 5, int $offset = 0): array {
+        $sql = 'SELECT a.*, s.name AS status_name, p.name AS payment_name, pt.name AS pet_name, pt.species, u.full_name AS owner_name
                 FROM applications a
                 JOIN statuses s ON s.id = a.status_id
                 JOIN payment_methods p ON p.id = a.payment_method_id
+                JOIN pets pt ON pt.id = a.pet_id
                 JOIN users u ON u.id = a.user_id
                 WHERE 1=1';
         $params = [];
@@ -49,13 +50,12 @@ class Application {
             $params[] = $filters['service'];
         }
         if (!empty($filters['search'])) {
-            $sql .= ' AND (a.pet_name LIKE ? OR u.full_name LIKE ?)';
+            $sql .= ' AND (pt.name LIKE ? OR u.full_name LIKE ?)';
             $params[] = '%' . $filters['search'] . '%';
             $params[] = '%' . $filters['search'] . '%';
         }
 
         $sql .= ' ORDER BY a.id DESC LIMIT ' . (int)$limit . ' OFFSET ' . (int)$offset;
-
         $st = Database::pdo()->prepare($sql);
         $st->execute($params);
         return $st->fetchAll();
