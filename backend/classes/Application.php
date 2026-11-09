@@ -31,15 +31,57 @@ class Application {
         return $st->fetchAll();
     }
 
-    public static function all(): array {
-        return Database::pdo()->query(
-            'SELECT a.*, s.name AS status_name, p.name AS payment_name, u.full_name AS owner_name
-             FROM applications a
-             JOIN statuses s ON s.id = a.status_id
-             JOIN payment_methods p ON p.id = a.payment_method_id
-             JOIN users u ON u.id = a.user_id
-             ORDER BY a.id DESC'
-        )->fetchAll();
+        public static function all(array $filters = [], int $limit = 5, int $offset = 0): array {
+        $sql = 'SELECT a.*, s.name AS status_name, p.name AS payment_name, u.full_name AS owner_name
+                FROM applications a
+                JOIN statuses s ON s.id = a.status_id
+                JOIN payment_methods p ON p.id = a.payment_method_id
+                JOIN users u ON u.id = a.user_id
+                WHERE 1=1';
+        $params = [];
+
+        if (!empty($filters['status_id'])) {
+            $sql .= ' AND a.status_id = ?';
+            $params[] = $filters['status_id'];
+        }
+        if (!empty($filters['service'])) {
+            $sql .= ' AND a.service = ?';
+            $params[] = $filters['service'];
+        }
+        if (!empty($filters['search'])) {
+            $sql .= ' AND (a.pet_name LIKE ? OR u.full_name LIKE ?)';
+            $params[] = '%' . $filters['search'] . '%';
+            $params[] = '%' . $filters['search'] . '%';
+        }
+
+        $sql .= ' ORDER BY a.id DESC LIMIT ' . (int)$limit . ' OFFSET ' . (int)$offset;
+
+        $st = Database::pdo()->prepare($sql);
+        $st->execute($params);
+        return $st->fetchAll();
+    }
+
+    public static function countAll(array $filters = []): int {
+        $sql = 'SELECT COUNT(*) FROM applications a JOIN users u ON u.id = a.user_id WHERE 1=1';
+        $params = [];
+
+        if (!empty($filters['status_id'])) {
+            $sql .= ' AND a.status_id = ?';
+            $params[] = $filters['status_id'];
+        }
+        if (!empty($filters['service'])) {
+            $sql .= ' AND a.service = ?';
+            $params[] = $filters['service'];
+        }
+        if (!empty($filters['search'])) {
+            $sql .= ' AND (a.pet_name LIKE ? OR u.full_name LIKE ?)';
+            $params[] = '%' . $filters['search'] . '%';
+            $params[] = '%' . $filters['search'] . '%';
+        }
+
+        $st = Database::pdo()->prepare($sql);
+        $st->execute($params);
+        return (int)$st->fetchColumn();
     }
 
     public static function find(int $id): ?array {

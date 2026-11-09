@@ -90,3 +90,18 @@ h1 { font-size: 22px; margin: 8px 0 16px; }
   .slider-btn { padding: 8px 12px; font-size: 14px; }
   .hero h1 { font-size: 20px; }
 }
+
+.toast {
+  animation: slideDown 0.3s ease-out forwards;
+}
+@keyframes slideDown {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.btn {
+  transition: transform 0.1s, background-color 0.2s;
+}
+.btn:active {
+  transform: scale(0.96);
+}
