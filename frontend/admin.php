@@ -7,6 +7,9 @@ $statuses = Database::pdo()->query('SELECT * FROM statuses')->fetchAll();
 require __DIR__ . '/partials/header.php';
 ?>
 <h1>Панель администратора</h1>
+<?php if (!$apps): ?>
+  <p>Заявок пока нет.</p>
+<?php endif; ?>
 
 <?php foreach ($apps as $a): ?>
   <div class="card">
