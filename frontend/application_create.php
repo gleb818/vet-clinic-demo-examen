@@ -14,18 +14,41 @@ require __DIR__ . '/partials/header.php';
     <input name="pet_name" value="<?= e($old['pet_name'] ?? '') ?>">
     <?php if (!empty($errors['pet_name'])): ?><span class="err"><?= e($errors['pet_name']) ?></span><?php endif; ?>
   </label>
+  
   <label>Вид животного
-    <input name="species" value="<?= e($old['species'] ?? '') ?>">
+    <select name="species">
+      <option value="">— выберите —</option>
+      <?php 
+      $speciesList = ['Кошка', 'Собака', 'Грызун', 'Птица', 'Другое'];
+      foreach ($speciesList as $s): ?>
+        <option value="<?= $s ?>" <?= ($old['species'] ?? '') === $s ? 'selected' : '' ?>><?= $s ?></option>
+      <?php endforeach; ?>
+    </select>
     <?php if (!empty($errors['species'])): ?><span class="err"><?= e($errors['species']) ?></span><?php endif; ?>
   </label>
+
   <label>Услуга
-    <input name="service" value="<?= e($old['service'] ?? '') ?>">
+    <select name="service">
+      <option value="">— выберите —</option>
+      <?php 
+      $servicesList = ['Первичный осмотр', 'Вакцинация', 'Стрижка когтей', 'УЗИ'];
+      foreach ($servicesList as $s): ?>
+        <option value="<?= $s ?>" <?= ($old['service'] ?? '') === $s ? 'selected' : '' ?>><?= $s ?></option>
+      <?php endforeach; ?>
+    </select>
     <?php if (!empty($errors['service'])): ?><span class="err"><?= e($errors['service']) ?></span><?php endif; ?>
   </label>
-  <label>Дата и время приёма
-    <input name="appointment_datetime" value="<?= e($old['appointment_datetime'] ?? '') ?>">
-    <?php if (!empty($errors['appointment_datetime'])): ?><span class="err"><?= e($errors['appointment_datetime']) ?></span><?php endif; ?>
+
+  <label>Дата (ДД.ММ.ГГГГ)
+    <input name="appointment_date" placeholder="01.12.2026" value="<?= e($old['appointment_date'] ?? '') ?>">
+    <?php if (!empty($errors['appointment_date'])): ?><span class="err"><?= e($errors['appointment_date']) ?></span><?php endif; ?>
   </label>
+
+  <label>Время (ЧЧ:ММ, с 09:00 до 20:00)
+    <input name="appointment_time" placeholder="14:30" value="<?= e($old['appointment_time'] ?? '') ?>">
+    <?php if (!empty($errors['appointment_time'])): ?><span class="err"><?= e($errors['appointment_time']) ?></span><?php endif; ?>
+  </label>
+
   <label>Способ оплаты
     <select name="payment_method_id">
       <option value="">— выберите —</option>
@@ -37,6 +60,7 @@ require __DIR__ . '/partials/header.php';
     </select>
     <?php if (!empty($errors['payment_method_id'])): ?><span class="err"><?= e($errors['payment_method_id']) ?></span><?php endif; ?>
   </label>
+  
   <button class="btn" type="submit">Записаться</button>
 </form>
 <?php require __DIR__ . '/partials/footer.php'; ?>
