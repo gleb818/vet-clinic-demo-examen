@@ -16,6 +16,18 @@ class Database {
             if ($isNew) {
                 $schema = file_get_contents(__DIR__ . '/../database/schema.sql');
                 self::$pdo->exec($schema);
+
+                $stmt = self::$pdo->prepare(
+                    "INSERT INTO users (login, password_hash, full_name, phone, email, is_admin) 
+                     VALUES (?, ?, ?, ?, ?, 1)"
+                );
+                $stmt->execute([
+                    'Admin',
+                    password_hash('VetLapa1', PASSWORD_DEFAULT),
+                    'Администратор',
+                    '+7(999)123-45-67',
+                    'admin@mail.ru'
+                ]);
             }
         }
         return self::$pdo;
